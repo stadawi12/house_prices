@@ -97,6 +97,7 @@ def save_data(df, filename, override=False):
         if override:
             # save data frame to a csv file in the data/clean directory
             df.to_csv(path_full)
+            print(f"Successfully saved file to {path_full}")
 
         else:
             print(f"Found filename {filename} already stored in 'data/clean'")
@@ -104,13 +105,37 @@ def save_data(df, filename, override=False):
     else:
         # save data frame to a csv file in the data/clean directory
         df.to_csv(path_full)
+        print(f"Successfully saved file to {path_full}")
 
+# TODO: implement a correlate function that will correlate each column
+# with the house_price column and keep only those that are above a certain
+# threshold.
+def correlate():
+    pass
 
 if __name__ == '__main__':
 
+    # set override bool
+    override = False
+
+    # specify path to data sets
     path_train = 'data/raw/train.csv'
+    path_test  = 'data/raw/test.csv'
+
+    # load data as suing pandas from a csv file
     data_train = pd.read_csv(path_train)
+    data_test  = pd.read_csv(path_test)
+
+    # turn data into a pandas data frame
     df_train   = pd.DataFrame(data_train)
+    df_test    = pd.DataFrame(data_test)
+
+    # transform data to change integer values into integers (machine
+    # readable values)
     df_train_transformed = transform(df_train)
-    save_data(df_train_transformed, 'train.csv')
+    df_test_transformed  = transform(df_test)
+
+    # save data to the clean directory inside data
+    save_data(df_train_transformed, 'train.csv', override=override)
+    save_data(df_test_transformed, 'test.csv', override=override)
 
