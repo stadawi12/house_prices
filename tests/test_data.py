@@ -81,13 +81,14 @@ class TestData(unittest.TestCase):
             unique_raw   = list(df_raw[col].unique())
             unique_clean = list(df_clean[col].unique())
 
-            # Some one column in the raw training data contain a 0 and
+            # Some columns in the raw training data contain 0 and
             # nan values at the same time, so changin nan to zero by
             # cleaning the data reduces the number of unique elements of
             # that column because the nan's turn into 0's.
             # I take care of it by removing nan from the list of unique
             # elements in the raw column.
             # example: [0,1,2,nan] -> [0, 1, 2]
+            # which reduces the amount of unique elements
             if len(unique_raw) != len(unique_clean):
                 unique_raw = [x for x in unique_raw if np.isnan(x) == False]
                 print(f"Train data: Had to remove nan in unique values for column: {col}")
@@ -122,13 +123,14 @@ class TestData(unittest.TestCase):
             unique_raw   = list(df_raw[col].unique())
             unique_clean = list(df_clean[col].unique())
 
-            # Some one column in the raw testing data contain a 0 and
+            # Some columns in the raw testing data contain 0 and
             # nan values at the same time, so changin nan to zero by
             # cleaning the data reduces the number of unique elements of
             # that column because the nan's turn into 0's.
             # I take care of it by removing nan from the list of unique
             # elements in the raw column.
             # example: [0,1,2,nan] -> [0, 1, 2]
+            # which reduces the amount of unique elements
             if len(unique_raw) != len(unique_clean):
                 unique_raw = [x for x in unique_raw if np.isnan(x) == False]
                 print(f"Test data: Had to remove nan in unique values for column: {col}")
