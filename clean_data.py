@@ -61,7 +61,7 @@ def transform(df):
         else:
 
             # Fill all nan values with 0's
-            df[col].fillna(0, inplace=True)
+            df[col].fillna(0.12345678, inplace=True)
 
     # Use LabelEncoder to turn string values into integers
     # For each column in training data
@@ -190,9 +190,8 @@ def plot_var(df, var: float, conditional: str ='<', n_plots: int = 4):
                 pdf += 1
                 n = 0
 
-    if not os.path.exists(f'data/clean/plots/var/var_{pdf}.pdf'):
+    if n < n_plots * n_plots:
         fig.savefig(f'data/clean/plots/var/var_{pdf}.pdf')
-        
 
 def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
     """ This function plots the count of elements of a column as a bar
@@ -265,7 +264,8 @@ def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
             # if the counter is out of scope of our axis, break out of
             # save the plot, reset n and increment pdf counter
             if n == n_plots*n_plots:
-                fig.savefig(f'data/clean/plots/bar/bar_{pdf}.pdf')
+                path = f'data/clean/plots/bar/bar_{pdf}.pdf'
+                fig.savefig(path)
                 # Initialise fig and axis, constrained_layout eliminates
                 # overlap
                 fig, ax = plt.subplots(n_plots, n_plots, 
@@ -273,14 +273,15 @@ def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
                 pdf += 1
                 n = 0
 
-    if not os.path.exists(f'data/clean/plots/bar/bar_{pdf}.pdf'):
-        fig.savefig(f'data/clean/plots/bar/bar_{pdf}.pdf')
+    if n < n_plots * n_plots:
+        path = f'data/clean/plots/bar/bar_{pdf}.pdf'
+        fig.savefig(path)
 
 
 if __name__ == '__main__':
 
     # set override bool
-    override = False
+    override = True
 
     # specify path to data sets
     path_train = 'data/clean/train.csv'
@@ -299,6 +300,5 @@ if __name__ == '__main__':
     # save_data(df_train_transformed, 'train.csv', override=override)
     # save_data(df_test_transformed, 'test.csv', override=override)
 
-    # hello
-    plot_var(df_train, 10000000000, conditional='<', n_plots=3)
-    # plot_bar(df_train, n_unique=10000, n_plots=3)
+    plot_var(df_train, 10000000000.0, conditional='<', n_plots=3)
+    plot_bar(df_train, n_unique=10000, n_plots=3)
