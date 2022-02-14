@@ -149,6 +149,7 @@ def plot_var(df, var: float, conditional: str ='<', n_plots: int = 4):
 
     # initialise counter and only increment when condition is true
     n = 0
+    pdf = 0
     for col in df_train:
 
         # Determine which condition to use
@@ -169,7 +170,8 @@ def plot_var(df, var: float, conditional: str ='<', n_plots: int = 4):
             print(n, n // n_plots, n % n_plots)
 
             # plot a scatter plot of column vs the SalePrice column
-            ax[n//n_plots, n%n_plots].scatter(x_data, y_data)
+            ax[n//n_plots, n%n_plots].scatter(x_data, y_data, 
+                    alpha=0.5, marker=".")
 
             # set title of axis to the column name
             ax[n//n_plots, n%n_plots].set_title(col)
@@ -178,12 +180,19 @@ def plot_var(df, var: float, conditional: str ='<', n_plots: int = 4):
             n += 1
 
             # if the counter is out of scope of our axis, break out of
-            # the loop
-            if n == n_plots*n_plots - 1:
-                break
+            # save the plot, reset n and increment pdf counter
+            if n == n_plots*n_plots:
+                fig.savefig(f'data/clean/plots/var/var_{pdf}.pdf')
+                # Initialise fig and axis, constrained_layout eliminates
+                # overlap
+                fig, ax = plt.subplots(n_plots, n_plots, 
+                        constrained_layout=True)
+                pdf += 1
+                n = 0
+
+    if not os.path.exists(f'data/clean/plots/var/var_{pdf}.pdf'):
+        fig.savefig(f'data/clean/plots/var/var_{pdf}.pdf')
         
-    # return the fig
-    plt.show()
 
 def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
     """ This function plots the count of elements of a column as a bar
@@ -211,6 +220,9 @@ def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
 
     # initialise counter
     n = 0
+
+    # pdf counter
+    pdf = 0
 
     # iterate over each column of a data frame
     for col in df:
@@ -251,12 +263,19 @@ def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
             n += 1
 
             # if the counter is out of scope of our axis, break out of
-            # the loop so we don't get an error
-            if n == n_plots*n_plots :
-                break
+            # save the plot, reset n and increment pdf counter
+            if n == n_plots*n_plots:
+                fig.savefig(f'data/clean/plots/bar/bar_{pdf}.pdf')
+                # Initialise fig and axis, constrained_layout eliminates
+                # overlap
+                fig, ax = plt.subplots(n_plots, n_plots, 
+                        constrained_layout=True)
+                pdf += 1
+                n = 0
 
-    # return the our figure
-    plt.show()
+    if not os.path.exists(f'data/clean/plots/bar/bar_{pdf}.pdf'):
+        fig.savefig(f'data/clean/plots/bar/bar_{pdf}.pdf')
+
 
 if __name__ == '__main__':
 
@@ -280,6 +299,6 @@ if __name__ == '__main__':
     # save_data(df_train_transformed, 'train.csv', override=override)
     # save_data(df_test_transformed, 'test.csv', override=override)
 
-    # plot_data(df_train)
-    # plot_var(df_train, 0.01, conditional='<', n_plots=4)
-    # plot_bar(df_train, n_unique=3)
+    # hello
+    plot_var(df_train, 10000000000, conditional='<', n_plots=3)
+    # plot_bar(df_train, n_unique=10000, n_plots=3)
