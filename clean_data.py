@@ -2,6 +2,8 @@
 
 import pandas as pd
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
+import pyparsing
 import os
 
 """
@@ -113,29 +115,171 @@ def save_data(df, filename, override=False):
 def correlate():
     pass
 
+def plot_var(df, var: float, conditional: str ='<', n_plots: int = 4):
+    """ Plots columns of data vs SalePrice, choice of columns 
+    is based on variance of a column, we have to specify the 
+    condition and a threshold. So for example, we can specify if we 
+    want to plot all columns with variance greater than 10.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        This is the data frame we want to operate on and which we want
+        to use to plot our graphs
+    var : float 
+        This is the threshold for our condition
+    conditional : str (optional: default='<')
+        Can either be ">" or "<", determines the conditional of the
+        condition
+    n_plots : int (optional: default=4)
+        this is the number of plots we want to show, the plots will be
+        laid out in a grid of size n_plots x n_plots.
+
+    Returns
+    -------
+    plt.show() : matplotlib.method
+        Plots the data we have filtered for
+
+    """
+    # Initialise fig and axis, constrained_layout eliminates overlap
+    fig, ax = plt.subplots(n_plots, n_plots, constrained_layout=True)
+
+    # set y_data (points on y-axis) to the SalePrice column
+    y_data = df['SalePrice']
+
+    # initialise counter and only increment when condition is true
+    n = 0
+    for col in df_train:
+
+        # Determine which condition to use
+        if conditional == "<":
+            # Perform check
+            condition = df[col].var() <= var
+        else:
+            # Perform check
+            condition = df[col].var() >= var
+
+        # Given condition is true...
+        if condition:
+
+            # set x_data to the column for which the condition was true
+            x_data = df[col]
+
+            # print diagnostic data
+            print(n, n // n_plots, n % n_plots)
+
+            # plot a scatter plot of column vs the SalePrice column
+            ax[n//n_plots, n%n_plots].scatter(x_data, y_data)
+
+            # set title of axis to the column name
+            ax[n//n_plots, n%n_plots].set_title(col)
+
+            # increment counter
+            n += 1
+
+            # if the counter is out of scope of our axis, break out of
+            # the loop
+            if n == n_plots*n_plots - 1:
+                break
+        
+    # return the fig
+    plt.show()
+
+def plot_bar(df, n_unique: int = 4, n_plots: int = 4):
+    """ This function plots the count of elements of a column as a bar
+    chart. It constraints itself to columns with only n_unique elements
+    or less.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        data frame that we will be working on
+    n_unique : int (optional: default=4)
+        largest number of unique elements of a column to consider
+    n_plots : int (optional: default=4)
+        number of plots to show at once, the layout is a grid of n_plots
+        x n_plots axis.
+
+    Returns
+    -------
+    plt.show() 
+        returns the plotted data
+
+    """
+    # Initialise fig and axis, constrained_layout eliminates overlap
+    fig, ax = plt.subplots(n_plots, n_plots, constrained_layout=True)
+
+    # initialise counter
+    n = 0
+
+    # iterate over each column of a data frame
+    for col in df:
+
+        # obtain all unique elements of a column
+        unique = df[col].unique()
+
+        # only capture columns with unique elements <= n_unique
+        if len(unique) <= n_unique:
+
+            # Create a dictionary to keep count of each element in a
+            # unique element of a column
+            d = {c: 0 for c in unique}
+
+            # turn elements of a column to a list
+            col_list = df[col].tolist()
+
+            # populate the dictionary by iterating over the column
+            # elements and incrementing the correct value in the
+            # dictionary by one
+            for el in col_list: d[el] += 1
+
+            # Extract the names and values of the dictionary after the
+            # counting is complete
+            names  = list(d.keys())
+            values = list(d.values())
+
+            # print diagnostic data
+            print(n, n // n_plots, n % n_plots)
+
+            # plot a bar chart of element counts in a column
+            ax[n//n_plots, n%n_plots].bar(names, values)
+
+            # set title of axis to the column name
+            ax[n//n_plots, n%n_plots].set_title(col)
+
+            # increment counter
+            n += 1
+
+            # if the counter is out of scope of our axis, break out of
+            # the loop so we don't get an error
+            if n == n_plots*n_plots :
+                break
+
+    # return the our figure
+    plt.show()
+
 if __name__ == '__main__':
 
     # set override bool
     override = False
 
     # specify path to data sets
-    path_train = 'data/raw/train.csv'
+    path_train = 'data/clean/train.csv'
     path_test  = 'data/raw/test.csv'
 
     # load data as suing pandas from a csv file
-    data_train = pd.read_csv(path_train)
-    data_test  = pd.read_csv(path_test)
+    df_train = pd.read_csv(path_train)
+    df_test  = pd.read_csv(path_test)
 
-    # turn data into a pandas data frame
-    df_train   = pd.DataFrame(data_train)
-    df_test    = pd.DataFrame(data_test)
+    # # transform data to change integer values into integers (machine
+    # # readable values)
+    # df_train_transformed = transform(df_train)
+    # df_test_transformed  = transform(df_test)
 
-    # transform data to change integer values into integers (machine
-    # readable values)
-    df_train_transformed = transform(df_train)
-    df_test_transformed  = transform(df_test)
+    # # save data to the clean directory inside data
+    # save_data(df_train_transformed, 'train.csv', override=override)
+    # save_data(df_test_transformed, 'test.csv', override=override)
 
-    # save data to the clean directory inside data
-    save_data(df_train_transformed, 'train.csv', override=override)
-    save_data(df_test_transformed, 'test.csv', override=override)
-
+    # plot_data(df_train)
+    # plot_var(df_train, 0.01, conditional='<', n_plots=4)
+    # plot_bar(df_train, n_unique=3)

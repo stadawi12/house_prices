@@ -1,0 +1,5 @@
+columns to remove:
+- Utilities: low variance (<0.01) only two unique elements, most
+elements (over 95%) are the same value 
+- Street: low variance (<0.01) only two unique elements, most
+elements (over 95%) are the same value 
