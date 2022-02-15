@@ -288,8 +288,11 @@ if __name__ == '__main__':
     path_test  = 'data/raw/test.csv'
 
     # load data as suing pandas from a csv file
-    df_train = pd.read_csv(path_train)
-    df_test  = pd.read_csv(path_test)
+    data_train = pd.read_csv(path_train)
+    data_test  = pd.read_csv(path_test)
+
+    df_train = pd.DataFrame(data_train)
+    df_test  = pd.DataFrame(data_test)
 
     # # transform data to change integer values into integers (machine
     # # readable values)
@@ -300,5 +303,10 @@ if __name__ == '__main__':
     # save_data(df_train_transformed, 'train.csv', override=override)
     # save_data(df_test_transformed, 'test.csv', override=override)
 
-    plot_var(df_train, 10000000000.0, conditional='<', n_plots=3)
-    plot_bar(df_train, n_unique=10000, n_plots=3)
+    # plot_var(df_train, 10000000000.0, conditional='<', n_plots=3)
+    # plot_bar(df_train, n_unique=10000, n_plots=3)
+
+    for col in df_train:
+        var = df_train[col].var()
+        if var < 0.2:
+            print(col, var)
